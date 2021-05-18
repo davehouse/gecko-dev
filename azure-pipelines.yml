@@ -1,0 +1,25 @@
+# C/C++ with GCC
+# Build your C/C++ project with GCC using make.
+# Add steps that publish test results, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/apps/c-cpp/gcc
+
+trigger:
+- azure-pipelines
+
+pool:
+  vmImage: 'ubuntu-18.04'
+
+steps:
+- bash: |
+    echo "Hello world from $AGENT_NAME running on $AGENT_OS"
+    case $BUILD_REASON in
+            "Manual") echo "$BUILD_REQUESTEDFOR manually queued the build." ;;
+            "IndividualCI") echo "This is a CI build for $BUILD_REQUESTEDFOR." ;;
+            "BatchedCI") echo "This is a batched CI build for $BUILD_REQUESTEDFOR." ;;
+        *) $BUILD_REASON ;;
+    esac
+    ./mach bootstrap --application-choice=browser_artifact_mode --no-interactive --no-system-changes
+  displayName: bootstrap
+- script: |
+    make
+  displayName: 'make'
